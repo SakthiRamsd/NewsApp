@@ -26,6 +26,7 @@ export default function LoginScreen({ navigation }) {
       .then((userCredential) => {
         // Signed in 
         const user = userCredential.user;
+        console.log(user.email)
         navigation.navigate('Home', { userEmail: email });
       })
       .catch((error) => {
@@ -55,9 +56,12 @@ export default function LoginScreen({ navigation }) {
            <TouchableOpacity onPress={handleSignIn} style={{ backgroundColor: 'red', padding: 10, borderRadius: 30 }}>
               <Text style={{ color: 'white', textAlign: 'center' }}>Sign-In</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleSignUp} style={{ backgroundColor: 'red', padding: 10, borderRadius: 30 }}>
+
+            <TouchableOpacity onPress={handleSignUp} style={{ backgroundColor: 'blue', padding: 10, borderRadius: 30,}}>
+              
               <Text style={{ color: 'white', textAlign: 'center' }}>Sign-Up</Text>
             </TouchableOpacity>
+
           </View>
       </View>
 

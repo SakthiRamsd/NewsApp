@@ -1,4 +1,3 @@
-// ReadNewsScreen.js
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, Linking } from 'react-native';
 
@@ -10,7 +9,7 @@ const ReadNewsScreen = ({ route }) => {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor:'lightgray',padding:20 }}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor:'lightgray',padding:20,borderRadius:35 }}>
       <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{title}</Text>
       <Text style={{ fontSize: 18, fontStyle: 'italic', marginBottom: 10, color:'red'}}>{author}</Text>
       <Image source={{ uri: image }} style={{ width: 300, height: 200, marginBottom: 10 }} />

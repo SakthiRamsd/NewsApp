@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, Image, TouchableOpacity, Share } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
 
 
 const NewsList = ({ category }) => {
@@ -12,7 +13,7 @@ const NewsList = ({ category }) => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await axios.get(`https://newsapi.org/v2/top-headlines?country=in&apiKey=d7d172cd05ad4469bb29df1e75243e7f`);
+        const response = await axios.get(`https://newsapi.org/v2/top-headlines?country=in&apiKey=8bf522652b46403abd8c42d4f2f1f590`);
         console.log(response.data.articles)
         setArticles(response.data.articles);
       } catch (error) {
@@ -34,7 +35,7 @@ const NewsList = ({ category }) => {
   };
 
 
-
+   
   const handleSaveArticle = async (item) => {
     try {
       // Fetch existing saved articles from AsyncStorage
@@ -47,22 +48,30 @@ const NewsList = ({ category }) => {
       savedArticles.push(item);
       // Save the updated list of articles to AsyncStorage
       await AsyncStorage.setItem('savedArticles', JSON.stringify(savedArticles));
-      alert('Article saved successfully!');
+      alert('Article Saved successfully!');
     } catch (error) {
       console.error('Error saving article:', error);
-      alert('Failed to save article.');
+      alert('Article Saved Failed!');
     }
   };
   
 
-  const removeArticle = async (title) => {
+  const handleShareArticle = async (item) => {
     try {
-      const existingArticles = await AsyncStorage.getItem('savedArticles');
-      let savedArticles = existingArticles ? JSON.parse(existingArticles) : [];
-      savedArticles = savedArticles.filter(article => article.title !== title);
-      await AsyncStorage.setItem('savedArticles', JSON.stringify(savedArticles));
+      const result = await Share.share({
+        message: `${item.title}\n\n${item.url}`,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
     } catch (error) {
-      console.error('Error removing article:', error);
+      console.error('Error sharing article:', error);
     }
   };
   
@@ -78,13 +87,17 @@ const NewsList = ({ category }) => {
           <View style={{gap:5}}>
             <Text  style={{ Color: 'black', fontSize: 22, fontWeight: 'bold' }}>{item.title}</Text>
             <Text style={{ color: 'red', fontSize: 15, fontStyle: 'italic' }}>{item.author}</Text>
-            <TouchableOpacity onPress={() => handleSaveArticle(item)}>
-              <Text>Save Article</Text>
+            <View style={{flexDirection:'row',justifyContent:'space-between',padding:15}}>
+            <TouchableOpacity onPress={() => handleSaveArticle(item)} style={{alignItems:'center',justifyContent:"center"}}>
+              <Ionicons name="bookmark" size={25} color="black" />
+              <Text style={{fontSize:12}}>save</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => removeArticle(item.title)}>
-              <Text>Remove</Text>
+            <TouchableOpacity onPress={() => handleShareArticle(item)} style={{alignItems:'center',justifyContent:"center"}}>
+              <Ionicons name="share-social" size={25} color="black" />
+              <Text style={{fontSize:12}}>share</Text>
             </TouchableOpacity>
-          </View>
+            </View>
+            </View>
         </TouchableOpacity>
       )}
     />

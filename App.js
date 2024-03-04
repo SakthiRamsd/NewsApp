@@ -6,8 +6,7 @@ import LoginScreen from './App/Pages/LoginScreen';
 import { initializeApp } from 'firebase/app';
 import TabNavigation from './App/Navigations/TabNavigation';
 import ReadNewsScreen from './App/Pages/ReadNewsScreen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import SavedNewsScreen from './App/Pages/SavedNewsScreen';
+import ProfileScreen from './App/Pages/ProfileScreen';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDZYySc1KKJy-6M4gxjhlLjkijELYtUNPk",
@@ -26,18 +25,20 @@ const Stack = createStackNavigator();
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [userEmail, setUserEmail] = useState(null);
 
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
+      setUserEmail(user ? user.email : null);
+     
     });
 
     return unsubscribe;
   }, []);
 
-  
-
+  console.log(userEmail)
 
   return (
     <NavigationContainer>
@@ -46,11 +47,16 @@ export default function App() {
           <>
           <Stack.Screen name="Home" component={TabNavigation} options={{ headerShown: false }} />
           <Stack.Screen name="ReadNews" component={ReadNewsScreen} />
+          {/* <Stack.Screen name="Profile">
+  {(props) => userEmail ? <ProfileScreen {...props} userEmail={userEmail} /> : null}
+</Stack.Screen> */}
+
           </>
         ) : (
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         )}
       </Stack.Navigator>
+     
     </NavigationContainer>
   );
 }

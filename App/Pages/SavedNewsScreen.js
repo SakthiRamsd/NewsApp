@@ -1,15 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, ActivityIndicator, RefreshControl, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-const SavedNewsScreen = ({ handleNewsPress, handleSaveArticle, removeArticle }) => {
+const SavedNewsScreen = () => {
   const [savedArticles, setSavedArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const navigation = useNavigation();
 
   useEffect(() => {
     fetchSavedArticles();
   }, []);
+
+  const handleNewsPress = (item) => {
+    navigation.navigate('ReadNews', {
+      title: item.title,
+      author: item.author,
+      image: item.urlToImage,
+      description: item.description,
+      url: item.url,
+    });
+  };
+
 
   const fetchSavedArticles = async () => {
     try {
@@ -23,6 +37,20 @@ const SavedNewsScreen = ({ handleNewsPress, handleSaveArticle, removeArticle }) 
       setLoading(false);
     }
   };
+
+  const removeArticle = async (title) => {
+    try {
+      const existingArticles = await AsyncStorage.getItem('savedArticles');
+      let savedArticles = existingArticles ? JSON.parse(existingArticles) : [];
+      savedArticles = savedArticles.filter(article => article.title !== title);
+      await AsyncStorage.setItem('savedArticles', JSON.stringify(savedArticles));
+      alert('Article Removed successfully!');
+    } catch (error) {
+      console.error('Error removing article:', error);
+      alert('Article Removed Failed!');
+    }
+  };
+  
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -44,12 +72,12 @@ const SavedNewsScreen = ({ handleNewsPress, handleSaveArticle, removeArticle }) 
           <View style={{gap:5}}>
             <Text  style={{ Color: 'black', fontSize: 22, fontWeight: 'bold' }}>{item.title}</Text>
             <Text style={{ color: 'red', fontSize: 15, fontStyle: 'italic' }}>{item.author}</Text>
-            <TouchableOpacity onPress={() => handleSaveArticle(item)}>
-              <Text>Save Article</Text>
-            </TouchableOpacity>
+            <View style={{justifyContent:'center',marginTop:5}}>
             <TouchableOpacity onPress={() => removeArticle(item.title)}>
-              <Text>Remove</Text>
+              <MaterialCommunityIcons name="bookmark-remove" size={28} color="black" />
+              <Text style={{fontSize:10}}>Remove</Text>
             </TouchableOpacity>
+            </View>
           </View>
         </TouchableOpacity>
           )}
