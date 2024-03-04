@@ -4,6 +4,7 @@ import ProfileScreen from '../Pages/ProfileScreen';
 import { Ionicons } from '@expo/vector-icons';
 import SavedNewsScreen from '../Pages/SavedNewsScreen';
 import { FontAwesome } from '@expo/vector-icons';
+import SearchNewsScreen from '../Pages/SearchNewsScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -19,6 +20,11 @@ export default function TabNavigation() {
       <Tab.Screen name="SavedNews" component={SavedNewsScreen} options={{
         tabBarIcon: ({ color, size }) => (
           <FontAwesome name="bookmark" size={22} color={color} />
+        ), headerShown: false
+      }} />
+      <Tab.Screen name="SearchNews" component={SearchNewsScreen} options={{
+        tabBarIcon: ({ color, size }) => (
+          <FontAwesome name="search" size={22} color={color} />
         ), headerShown: false
       }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{
